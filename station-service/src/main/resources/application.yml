@@ -8,8 +8,7 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/stationServiceDb
-    username: postgres
-    password: 12345
+
 
   jpa:
     hibernate:
