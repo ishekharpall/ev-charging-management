@@ -59,4 +59,26 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(response);
     }
+
+
+    @ExceptionHandler(ChargerNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleChargerNotFound(
+            ChargerNotFoundException exception,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+
 }

@@ -7,12 +7,14 @@ spring:
     name: station-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/userServiceDb
-
+    url: jdbc:postgresql://localhost:5432/stationServiceDb
+    username: postgres
+    password: 12345
 
   jpa:
     hibernate:
-      ddl-auto: update
+#      ddl-auto: update
+       ddl-auto: create
 
     show-sql: true
 
