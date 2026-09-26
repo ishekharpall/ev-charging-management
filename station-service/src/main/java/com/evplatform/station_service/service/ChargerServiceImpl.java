@@ -103,4 +103,18 @@ public class ChargerServiceImpl implements ChargerService {
 
         chargerRepository.delete(charger);
     }
+
+    @Override
+    public ChargerResponse getStationCharger(UUID stationId, UUID chargerId) {
+
+        Charger charger = chargerRepository
+                .findById(chargerId)
+                .orElseThrow(() -> new ChargerNotFoundException(chargerId));
+
+        if (!charger.getStation().getId().equals(stationId)) {
+            throw new ChargerNotFoundException(chargerId);
+        }
+
+        return chargerMapper.toResponse(charger);
+    }
 }

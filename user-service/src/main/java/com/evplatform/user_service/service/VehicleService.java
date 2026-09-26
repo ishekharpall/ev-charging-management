@@ -24,4 +24,6 @@ public interface VehicleService {
     );
 
     void deleteVehicle(UUID vehicleId);
+
+    VehicleResponse getUserVehicle(UUID userId, UUID vehicleId);
 }

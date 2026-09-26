@@ -25,4 +25,5 @@ public interface ChargerService {
 
     void deleteCharger(UUID chargerId);
 
+    ChargerResponse getStationCharger(UUID stationId, UUID chargerId);
 }

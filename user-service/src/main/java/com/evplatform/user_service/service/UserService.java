@@ -3,6 +3,7 @@ package com.evplatform.user_service.service;
 import com.evplatform.user_service.dto.CreateUserRequest;
 import com.evplatform.user_service.dto.UpdateUserRequest;
 import com.evplatform.user_service.dto.UserResponse;
+import com.evplatform.user_service.dto.VehicleResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,4 +22,6 @@ public interface UserService {
     );
 
     void deleteUser(UUID id);
+
+
 }

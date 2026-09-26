@@ -85,4 +85,14 @@ public class VehicleController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/users/{userId}/vehicles/{vehicleId}")
+    public ResponseEntity<VehicleResponse> getUserVehicle(
+            @PathVariable UUID userId,
+            @PathVariable UUID vehicleId
+    ) {
+        return ResponseEntity.ok(
+                vehicleService.getUserVehicle(userId, vehicleId)
+        );
+    }
 }

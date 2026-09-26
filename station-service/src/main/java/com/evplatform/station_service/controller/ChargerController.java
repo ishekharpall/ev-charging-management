@@ -78,4 +78,14 @@ public class ChargerController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/stations/{stationId}/chargers/{chargerId}")
+    public ResponseEntity<ChargerResponse> getStationCharger(
+            @PathVariable UUID stationId,
+            @PathVariable UUID chargerId
+    ) {
+        return ResponseEntity.ok(
+                chargerService.getStationCharger(stationId, chargerId)
+        );
+    }
 }

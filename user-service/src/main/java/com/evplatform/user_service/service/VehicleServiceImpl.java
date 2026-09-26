@@ -111,4 +111,18 @@ public class VehicleServiceImpl implements VehicleService {
 
         vehicleRepository.delete(vehicle);
     }
+
+    @Override
+    public VehicleResponse getUserVehicle(UUID userId, UUID vehicleId) {
+
+        Vehicle vehicle = vehicleRepository
+                .findById(vehicleId)
+                .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
+
+        if (!vehicle.getUserId().equals(userId)) {
+            throw new VehicleNotFoundException(vehicleId);
+        }
+
+        return vehicleMapper.toResponse(vehicle);
+    }
 }

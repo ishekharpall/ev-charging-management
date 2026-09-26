@@ -3,10 +3,15 @@ package com.evplatform.user_service.service;
 import com.evplatform.user_service.dto.CreateUserRequest;
 import com.evplatform.user_service.dto.UpdateUserRequest;
 import com.evplatform.user_service.dto.UserResponse;
+import com.evplatform.user_service.dto.VehicleResponse;
 import com.evplatform.user_service.entity.User;
+import com.evplatform.user_service.entity.Vehicle;
 import com.evplatform.user_service.exception.UserNotFoundException;
+import com.evplatform.user_service.exception.VehicleNotFoundException;
 import com.evplatform.user_service.mapper.UserMapper;
+import com.evplatform.user_service.mapper.VehicleMapper;
 import com.evplatform.user_service.repository.UserRepository;
+import com.evplatform.user_service.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +28,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final VehicleMapper vehicleMapper;
+    private final VehicleRepository vehicleRepository;
 
     private final PasswordEncoder passwordEncoder =
             new BCryptPasswordEncoder();
@@ -92,4 +99,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
     }
+
+
 }
