@@ -1,6 +1,7 @@
 package com.evplatform.station_service.service;
 
 import com.evplatform.station_service.dto.CreateStationRequest;
+import com.evplatform.station_service.dto.NearbyStationResponse;
 import com.evplatform.station_service.dto.StationResponse;
 import com.evplatform.station_service.dto.UpdateStationRequest;
 
@@ -21,4 +22,11 @@ public interface StationService {
     );
 
     void deleteStation(UUID id);
+
+    List<NearbyStationResponse> findNearbyStations(
+            double latitude,
+            double longitude,
+            double radiusKm
+    );
+
 }

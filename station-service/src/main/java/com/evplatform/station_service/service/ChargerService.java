@@ -24,4 +24,5 @@ public interface ChargerService {
     );
 
     void deleteCharger(UUID chargerId);
+
 }

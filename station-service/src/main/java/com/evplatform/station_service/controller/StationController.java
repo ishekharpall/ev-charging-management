@@ -1,6 +1,7 @@
 package com.evplatform.station_service.controller;
 
 import com.evplatform.station_service.dto.CreateStationRequest;
+import com.evplatform.station_service.dto.NearbyStationResponse;
 import com.evplatform.station_service.dto.StationResponse;
 import com.evplatform.station_service.dto.UpdateStationRequest;
 import com.evplatform.station_service.service.StationService;
@@ -71,5 +72,21 @@ public class StationController {
 
         return ResponseEntity
                 .ok("Station deleted successfully");
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<NearbyStationResponse>> findNearbyStations(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double radius
+    ) {
+
+        return ResponseEntity.ok(
+                stationService.findNearbyStations(
+                        latitude,
+                        longitude,
+                        radius
+                )
+        );
     }
 }
