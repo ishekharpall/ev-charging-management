@@ -3,15 +3,18 @@ package com.evplatform.charging_service.service;
 import com.evplatform.charging_service.client.BookingServiceClient;
 import com.evplatform.charging_service.dto.BookingServiceResponse;
 import com.evplatform.charging_service.dto.BookingStatus;
+import com.evplatform.charging_service.dto.ChargingSessionResponse;
 import com.evplatform.charging_service.dto.StartChargingRequest;
 import com.evplatform.charging_service.dto.StopChargingRequest;
 import com.evplatform.charging_service.entity.ChargingSession;
 import com.evplatform.charging_service.entity.ChargingSessionStatus;
 import com.evplatform.charging_service.exception.ChargingSessionNotFoundException;
+import com.evplatform.charging_service.mapper.ChargingSessionMapper;
 import com.evplatform.charging_service.repository.ChargingSessionRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,17 +23,20 @@ public class ChargingSessionServiceImpl
 
     private final ChargingSessionRepository chargingSessionRepository;
     private final BookingServiceClient bookingServiceClient;
+    private final ChargingSessionMapper chargingSessionMapper;
 
     public ChargingSessionServiceImpl(
             ChargingSessionRepository chargingSessionRepository,
-            BookingServiceClient bookingServiceClient
+            BookingServiceClient bookingServiceClient,
+            ChargingSessionMapper chargingSessionMapper
     ) {
         this.chargingSessionRepository = chargingSessionRepository;
         this.bookingServiceClient = bookingServiceClient;
+        this.chargingSessionMapper = chargingSessionMapper;
     }
 
     @Override
-    public ChargingSession startCharging(
+    public ChargingSessionResponse startCharging(
             StartChargingRequest request
     ) {
 
@@ -64,25 +70,33 @@ public class ChargingSessionServiceImpl
         session.setStartedAt(LocalDateTime.now());
         session.setStatus(ChargingSessionStatus.STARTED);
 
-        return chargingSessionRepository.save(session);
+        ChargingSession savedSession =
+                chargingSessionRepository.save(session);
+
+        return chargingSessionMapper.toResponse(
+                savedSession
+        );
     }
 
     @Override
-    public ChargingSession getChargingSession(
+    public ChargingSessionResponse getChargingSession(
             UUID sessionId
     ) {
 
-        return chargingSessionRepository
-                .findById(sessionId)
-                .orElseThrow(() ->
-                        new ChargingSessionNotFoundException(
-                                sessionId
-                        )
-                );
+        ChargingSession session =
+                chargingSessionRepository
+                        .findById(sessionId)
+                        .orElseThrow(() ->
+                                new ChargingSessionNotFoundException(
+                                        sessionId
+                                )
+                        );
+
+        return chargingSessionMapper.toResponse(session);
     }
 
     @Override
-    public ChargingSession stopCharging(
+    public ChargingSessionResponse stopCharging(
             UUID sessionId,
             StopChargingRequest request
     ) {
@@ -117,11 +131,48 @@ public class ChargingSessionServiceImpl
         ChargingSession savedSession =
                 chargingSessionRepository.save(session);
 
-        // Complete the associated booking
         bookingServiceClient.completeBooking(
                 session.getBookingId()
         );
 
-        return savedSession;
+        return chargingSessionMapper.toResponse(
+                savedSession
+        );
+    }
+
+    @Override
+    public List<ChargingSessionResponse> getUserSessions(
+            UUID userId
+    ) {
+
+        return chargingSessionRepository
+                .findByUserId(userId)
+                .stream()
+                .map(chargingSessionMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ChargingSessionResponse> getChargerSessions(
+            UUID chargerId
+    ) {
+
+        return chargingSessionRepository
+                .findByChargerId(chargerId)
+                .stream()
+                .map(chargingSessionMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ChargingSessionResponse> getSessionsByStatus(
+            ChargingSessionStatus status
+    ) {
+
+        return chargingSessionRepository
+                .findByStatus(status)
+                .stream()
+                .map(chargingSessionMapper::toResponse)
+                .toList();
     }
 }
