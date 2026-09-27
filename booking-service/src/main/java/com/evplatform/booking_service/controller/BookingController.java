@@ -65,4 +65,13 @@ public class BookingController {
                 bookingService.confirmBooking(bookingId)
         );
     }
+
+    @PutMapping("/{bookingId}/complete")
+    public ResponseEntity<BookingResponse> completeBooking(
+            @PathVariable UUID bookingId
+    ) {
+        return ResponseEntity.ok(
+                bookingService.completeBooking(bookingId)
+        );
+    }
 }

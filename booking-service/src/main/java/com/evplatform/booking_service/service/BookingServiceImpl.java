@@ -181,4 +181,26 @@ public class BookingServiceImpl implements BookingService {
 
         return bookingMapper.toResponse(savedBooking);
     }
+
+    @Override
+    public BookingResponse completeBooking(UUID bookingId) {
+
+        Booking booking = bookingRepository
+                .findById(bookingId)
+                .orElseThrow(() ->
+                        new BookingNotFoundException(bookingId)
+                );
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException(
+                    "Only a confirmed booking can be completed"
+            );
+        }
+
+        booking.setStatus(BookingStatus.COMPLETED);
+
+        Booking savedBooking = bookingRepository.save(booking);
+
+        return bookingMapper.toResponse(savedBooking);
+    }
 }

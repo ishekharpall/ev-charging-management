@@ -18,4 +18,6 @@ public interface BookingService {
     void cancelBooking(UUID bookingId);
 
     BookingResponse confirmBooking(UUID bookingId);
+
+    BookingResponse completeBooking(UUID bookingId);
 }
