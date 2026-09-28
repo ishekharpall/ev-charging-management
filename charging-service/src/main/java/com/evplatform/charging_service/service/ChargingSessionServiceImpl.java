@@ -8,6 +8,8 @@ import com.evplatform.charging_service.dto.StartChargingRequest;
 import com.evplatform.charging_service.dto.StopChargingRequest;
 import com.evplatform.charging_service.entity.ChargingSession;
 import com.evplatform.charging_service.entity.ChargingSessionStatus;
+import com.evplatform.charging_service.event.ChargingSessionCompletedEvent;
+import com.evplatform.charging_service.event.ChargingSessionEventProducer;
 import com.evplatform.charging_service.exception.ChargingSessionNotFoundException;
 import com.evplatform.charging_service.mapper.ChargingSessionMapper;
 import com.evplatform.charging_service.repository.ChargingSessionRepository;
@@ -24,15 +26,17 @@ public class ChargingSessionServiceImpl
     private final ChargingSessionRepository chargingSessionRepository;
     private final BookingServiceClient bookingServiceClient;
     private final ChargingSessionMapper chargingSessionMapper;
+    private final ChargingSessionEventProducer chargingSessionEventProducer;
 
     public ChargingSessionServiceImpl(
             ChargingSessionRepository chargingSessionRepository,
             BookingServiceClient bookingServiceClient,
-            ChargingSessionMapper chargingSessionMapper
+            ChargingSessionMapper chargingSessionMapper, ChargingSessionEventProducer chargingSessionEventProducer
     ) {
         this.chargingSessionRepository = chargingSessionRepository;
         this.bookingServiceClient = bookingServiceClient;
         this.chargingSessionMapper = chargingSessionMapper;
+        this.chargingSessionEventProducer = chargingSessionEventProducer;
     }
 
     @Override
@@ -134,6 +138,20 @@ public class ChargingSessionServiceImpl
         bookingServiceClient.completeBooking(
                 session.getBookingId()
         );
+
+        ChargingSessionCompletedEvent event =
+                new ChargingSessionCompletedEvent(
+                        savedSession.getId(),
+                        savedSession.getBookingId(),
+                        savedSession.getUserId(),
+                        savedSession.getVehicleId(),
+                        savedSession.getStationId(),
+                        savedSession.getChargerId(),
+                        savedSession.getEnergyConsumedKwh(),
+                        savedSession.getEndedAt()
+                );
+
+        chargingSessionEventProducer.publish(event);
 
         return chargingSessionMapper.toResponse(
                 savedSession
